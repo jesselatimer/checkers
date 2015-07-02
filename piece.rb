@@ -7,12 +7,13 @@ class Piece
 
   def inspect
     if king?
-      " O ".colorize(:color => :red) if color == :red
-      " O ".colorize(:color => :black) if color == :black
+      return " O ".colorize(:color => :red) if color == :red
+      return " O ".colorize(:color => :black) if color == :black
     else
-      " o ".colorize(:color => :red) if color == :red
-      " o ".colorize(:color => :black) if color == :black
+      return " o ".colorize(:color => :red) if color == :red
+      return " o ".colorize(:color => :black) if color == :black
     end
+    " ? "
   end
 
   def to_s

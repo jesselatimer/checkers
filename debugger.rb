@@ -4,8 +4,9 @@ class Debugger
     @board = board
   end
 
-  def display
-    
+  def display(selection_cursor)
+    puts "### DEBUGGER ###"
+    p "CLASS: #{@board[selection_cursor].class}"
   end
 
 end

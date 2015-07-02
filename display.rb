@@ -15,7 +15,6 @@ class Display
     @board = board
     @selection_cursor = [0,0]
     @movement_cursor  = [0,0]
-    @movement_mode = false
     @debugger = Debugger.new(board)
     @debug_mode = true
   end
@@ -24,12 +23,13 @@ class Display
     system("clear")
     print_board
     puts "This is further instruction in the game."
+    @movement_cursor = @selection_cursor unless board.movement_mode
   end
 
   def print_board
     board.grid.each_with_index do |row, i|
       row.each_with_index do |tile, j|
-        if    [i, j] == movement_cursor && movement_mode
+        if    [i, j] == movement_cursor && board.movement_mode
           print tile.to_s.colorize(:background => :light_magenta)
         elsif [i, j] == selection_cursor
           print tile.to_s.colorize(:background => :light_cyan)
@@ -41,6 +41,7 @@ class Display
       end
       puts
     end
+    @debugger.display(selection_cursor) if @debug_mode
   end
 
   def cursor_move?(input)
@@ -48,12 +49,18 @@ class Display
   end
 
   def move_cursor(input)
-    cursor_as_vector = (Vector[*DIRECTIONS[input]] + Vector[*@selection_cursor])
-    temp_cursor = cursor_as_vector.to_a
-    @selection_cursor = temp_cursor if board.on_board?(temp_cursor)
+    if board.movement_mode
+      cursor_as_vector = (Vector[*DIRECTIONS[input]] + Vector[*@movement_cursor])
+      temp_cursor = cursor_as_vector.to_a
+      @movement_cursor = temp_cursor if board.on_board?(temp_cursor)
+    else
+      cursor_as_vector = (Vector[*DIRECTIONS[input]] + Vector[*@selection_cursor])
+      temp_cursor = cursor_as_vector.to_a
+      @selection_cursor = temp_cursor if board.on_board?(temp_cursor)
+    end
   end
 
   private
-  attr_reader :board, :selection_cursor, :movement_cursor, :movement_mode
+  attr_reader :board, :selection_cursor, :movement_cursor
 
 end

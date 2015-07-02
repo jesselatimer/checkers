@@ -1,21 +1,44 @@
 require_relative 'piece'
-require_relative 'modules/populateable'
 
 class Board
-  include Populateable
 
-  attr_accessor :grid
+  COMMANDS = {
+    "\r" => :enter,
+    'q'  => :quit
+  }
+
+  attr_accessor :grid, :movement_mode
 
   def initialize
-    @grid = Array.new(8) { Array.new(8) { EmptyTile.new } }
+    @grid = Array.new(8) { Array.new(8) { } }
+    populate
+    @movement_mode = false
+  end
+
+  def [](pos)
+    row, col = pos
+    @grid[row][col]
+  end
+
+  def []=(pos, val)
+    x, y = pos
+    @grid[x][y] = val
   end
 
   def command?(input)
-    # returns true if the input is in the commands hash
+    COMMANDS.keys.include?(input)
   end
 
   def execute_command(input)
-    # if "enter"
+    command = COMMANDS[input]
+    if command == :quit
+      abort
+    elsif command == :enter
+      # if movement_mode
+      toggle_movement_mode
+      # end
+    end
+
     #   if display.confirmation_mode?
     #     perform moves
     #   if display.move_mode?
@@ -28,12 +51,26 @@ class Board
     # end
   end
 
+  def toggle_movement_mode
+    @movement_mode = !movement_mode
+  end
+
   def on_board?(pos)
     pos.all? { |num| num.between?(0, 7) }
   end
 
-  private
-
-  # other methods
+  def populate
+    @grid = grid.map.with_index do |row, i|
+      row.map.with_index do |tile, j|
+        if (i + j) % 2 == 0 && i < 3
+          Piece.new(:red)
+        elsif (i + j) % 2 == 0 && i > 4
+          Piece.new(:black)
+        else
+          EmptyTile.new
+        end
+      end
+    end
+  end
 
 end
