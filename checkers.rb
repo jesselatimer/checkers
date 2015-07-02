@@ -1,3 +1,5 @@
+require 'matrix'
+
 require_relative 'player'
 require_relative 'board'
 require_relative 'display'
@@ -16,7 +18,7 @@ class Game
   def play
     board.populate
     # set player
-    # until won?
+    until false #won?
       display.render
       begin
         input = current_player.play_turn
@@ -32,6 +34,7 @@ class Game
         puts "#{e.message}"
         retry
       end
+    end
     #   switch player
     # end
     # winning_method

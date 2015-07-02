@@ -1,26 +1,13 @@
 require_relative 'piece'
+require_relative 'modules/populateable'
 
 class Board
+  include Populateable
 
-  attr_reader :grid
+  attr_accessor :grid
 
   def initialize
     @grid = Array.new(8) { Array.new(8) { EmptyTile.new } }
-  end
-
-  def populate
-    # populate starting positions
-
-    # TEMP
-    # @grid = grid.map do |el|
-    #   x = rand(8)
-    #   if x % 2 == 0
-    #     Piece.new(:black)
-    #   else
-    #     Piece.new(:red)
-    #   end
-    # end
-    # grid
   end
 
   def command?(input)
@@ -39,6 +26,10 @@ class Board
     #     raise "Execute_command error"
     #   end
     # end
+  end
+
+  def on_board?(pos)
+    pos.all? { |num| num.between?(0, 7) }
   end
 
   private
