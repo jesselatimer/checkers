@@ -1,4 +1,4 @@
-class player
+class Player
 
   def initialize(color)
     @color = color

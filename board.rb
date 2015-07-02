@@ -2,12 +2,25 @@ require_relative 'piece'
 
 class Board
 
+  attr_reader :grid
+
   def initialize
-    @grid = Array.new(8) { Array.new(8) EmptyTile.new }
+    @grid = Array.new(8) { Array.new(8) { EmptyTile.new } }
   end
 
   def populate
     # populate starting positions
+
+    # TEMP
+    # @grid = grid.map do |el|
+    #   x = rand(8)
+    #   if x % 2 == 0
+    #     Piece.new(:black)
+    #   else
+    #     Piece.new(:red)
+    #   end
+    # end
+    # grid
   end
 
   def command?(input)
@@ -29,7 +42,6 @@ class Board
   end
 
   private
-  attr_reader :grid
 
   # other methods
 

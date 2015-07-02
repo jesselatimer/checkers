@@ -2,6 +2,8 @@ require_relative 'player'
 require_relative 'board'
 require_relative 'display'
 
+require 'byebug'
+
 class Game
 
   def initialize
@@ -12,23 +14,24 @@ class Game
   end
 
   def play
-    # board.populate
+    board.populate
     # set player
     # until won?
-    #   render board
-        begin
-          input = current_player.play_turn
-          if display.cursor_move?(input)
-            display.move_cursor(input)
-          elsif board.command?(input)
-            board.execute_command(input)
-          else
-            raise "Not a valid command."
-          end
-        rescue => e
-          puts "#{e.message}"
-          retry
+      display.render
+      begin
+        input = current_player.play_turn
+        return if input == "q" # move into commands
+        if display.cursor_move?(input)
+          display.move_cursor(input)
+        elsif board.command?(input)
+          board.execute_command(input)
+        else
+          raise "Not a valid command."
         end
+      rescue => e
+        puts "#{e.message}"
+        retry
+      end
     #   switch player
     # end
     # winning_method
@@ -38,3 +41,6 @@ class Game
   attr_reader :players, :current_player, :display, :board
 
 end
+
+game = Game.new
+game.play
