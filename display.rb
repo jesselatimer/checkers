@@ -30,7 +30,9 @@ class Display
     board.grid.each_with_index do |row, i|
       row.each_with_index do |tile, j|
         if    [i, j] == movement_cursor && board.movement_mode
-          print tile.to_s.colorize(:background => :light_magenta)
+          print tile.to_s.colorize(:background => :cyan)
+        elsif board[@selection_cursor].valid_move?([i, j]) && board.movement_mode
+          print tile.to_s.colorize(:background => :green)
         elsif [i, j] == selection_cursor
           print tile.to_s.colorize(:background => :light_cyan)
         elsif (i + j) % 2 == 0

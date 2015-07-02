@@ -84,6 +84,10 @@ class Piece
     @king
   end
 
+  def valid_move?(pos)
+    valid_moves.include?(pos)
+  end
+
   def color?(other_color)
     color == other_color
   end
@@ -100,6 +104,10 @@ class EmptyTile
 
   def inspect
     "   "
+  end
+
+  def valid_move?(pos)
+    false
   end
 
   def is_empty?
