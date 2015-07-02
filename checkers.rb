@@ -19,10 +19,10 @@ class Game
     board.populate
     # set player
     until false #won?
+      board.generate_moves
       display.render
       begin
         input = current_player.play_turn
-        return if input == "q" # move into commands
         if display.cursor_move?(input)
           display.move_cursor(input)
         elsif board.command?(input)

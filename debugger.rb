@@ -6,7 +6,8 @@ class Debugger
 
   def display(selection_cursor)
     puts "### DEBUGGER ###"
-    p "CLASS: #{@board[selection_cursor].class}"
+    puts  "CLASS: #{@board[selection_cursor].class}"
+    puts "Movement mode? #{@board.movement_mode}"
   end
 
 end

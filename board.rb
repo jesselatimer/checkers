@@ -51,6 +51,16 @@ class Board
     # end
   end
 
+  def generate_moves
+    grid.each do |row|
+      row.each do |tile|
+        unless tile.is_empty?
+          tile.generate_moves
+        end
+      end
+    end
+  end
+
   def toggle_movement_mode
     @movement_mode = !movement_mode
   end
@@ -63,9 +73,9 @@ class Board
     @grid = grid.map.with_index do |row, i|
       row.map.with_index do |tile, j|
         if (i + j) % 2 == 0 && i < 3
-          Piece.new(:red)
+          Piece.new(:red, [i, j], self)
         elsif (i + j) % 2 == 0 && i > 4
-          Piece.new(:black)
+          Piece.new(:black, [i, j], self)
         else
           EmptyTile.new
         end
