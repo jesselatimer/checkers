@@ -5,6 +5,8 @@ class Piece
   RED_JUMPS   = [[ 2, 2], [ 2, -2]]
   BLACK_JUMPS = [[-2, 2], [-2, -2]]
 
+  attr_reader :valid_moves, :valid_steps, :valid_jumps, :current_position, :color
+
   def initialize(color, current_position, board)
     @current_position = current_position
     @color = color
@@ -13,7 +15,8 @@ class Piece
   end
 
   def generate_moves
-    @valid_moves = []
+    @valid_steps = []
+    @valid_jumps = []
     move_type = king? ? :both : color
     case move_type
     when :red
@@ -28,22 +31,30 @@ class Piece
       generate_steps(BLACK_STEPS)
       generate_jumps(BLACK_JUMPS, BLACK_STEPS)
     end
+    @valid_moves = @valid_steps + @valid_jumps
   end
 
   def generate_steps(positions)
     positions.each do |pos|
-      if empty_tile?(pos)
-        @valid_moves << (Vector[*pos] + Vector[*current_position]).to_a
+      target_pos = (Vector[*pos] + Vector[*current_position]).to_a
+      if empty_tile?(target_pos)
+        @valid_steps << target_pos
       end
     end
   end
 
   def generate_jumps(positions, jumped_positions)
     positions.each_with_index do |pos, i|
-      if empty_tile?(pos) && !empty_tile?(jumped_positions[i])
-        @valid_moves << (Vector[*pos] + Vector[*current_position]).to_a
+      target_pos = (Vector[*pos] + Vector[*current_position]).to_a
+      if empty_tile?(target_pos) && enemy?(jumped_positions[i])
+        @valid_steps << target_pos
       end
     end
+  end
+
+  def enemy?(pos)
+    enemy_color = color == :red ? :black : :red
+    @board[pos].color == enemy_color
   end
 
   def empty_tile?(pos)
@@ -76,14 +87,14 @@ class Piece
   def color?(other_color)
     color == other_color
   end
-
-  private
-  attr_reader :color
-
 end
 
 class EmptyTile
+
+  attr_reader :valid_moves
+
   def initialize(color = :none)
+    @valid_moves = []
     @color = color
   end
 
