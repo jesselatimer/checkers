@@ -11,25 +11,38 @@ class Display
     'e' => [ 0,  1]
   }
 
+  attr_reader :selection_cursor, :movement_cursor, :current_player
+
   def initialize(board)
     @board = board
     @selection_cursor = [0,0]
     @movement_cursor  = [0,0]
-    @debugger = Debugger.new(board)
-    @debug_mode = true
+    @debugger = Debugger.new(board, self)
+    @debug_mode = false
   end
 
-  def render
+  def render(current_player)
+    @current_player = current_player
     system("clear")
     print_board
-    puts "This is further instruction in the game."
+    puts "WASD (Move Cursor)".center(board.grid.length * 3)
+    puts "Enter (Select Piece/Move)".center(board.grid.length * 3)
+    puts "E (Execute)".center(board.grid.length * 3)
+    puts
+    if current_player.color == :red
+      puts "☭ RED's turn!".center(board.grid.length * 3)
+    else
+      puts "☽ BLACK's turn!".center(board.grid.length * 3)
+    end
     @movement_cursor = @selection_cursor unless board.movement_mode
   end
 
   def print_board
     board.grid.each_with_index do |row, i|
       row.each_with_index do |tile, j|
-        if    [i, j] == movement_cursor && board.movement_mode
+        if board.in_queue?([i, j]) && board.movement_mode
+          print tile.to_s.colorize(:background => :yellow)
+        elsif    [i, j] == movement_cursor && board.movement_mode
           print tile.to_s.colorize(:background => :cyan)
         elsif board[@selection_cursor].valid_move?([i, j]) && board.movement_mode
           print tile.to_s.colorize(:background => :green)
@@ -62,7 +75,11 @@ class Display
     end
   end
 
+  def set_selection_cursor
+    @selection_cursor = @movement_cursor
+  end
+
   private
-  attr_reader :board, :selection_cursor, :movement_cursor
+  attr_reader :board
 
 end

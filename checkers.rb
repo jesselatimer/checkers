@@ -4,45 +4,50 @@ require_relative 'player'
 require_relative 'board'
 require_relative 'display'
 
-require 'byebug'
+# Still to-do: multi-jumping and forced jumping.
 
 class Game
 
   def initialize
     @players = [Player.new(:red), Player.new(:black)]
-    @current_player = players.first
     @board = Board.new
     @display = Display.new(board)
   end
 
   def play
-    board.populate
-    # set player
-    until false #won?
+    board.execute_command(:populate, display)
+    until over?
       board.generate_moves
-      display.render
+      @current_player = players.first
+      display.render(current_player)
       begin
         input = current_player.play_turn
         if display.cursor_move?(input)
           display.move_cursor(input)
         elsif board.command?(input)
-          board.execute_command(input)
+          players.reverse! if board.execute_command(input, display)
         else
-          raise "Not a valid command."
+          raise InvalidCommandError
         end
-      rescue => e
+      rescue InvalidCommandError => e
         puts "#{e.message}"
         retry
       end
     end
-    #   switch player
-    # end
-    # winning_method
+    display.render(current_player)
+    puts "#{players.last.color.to_s.upcase} WON"
   end
 
   private
   attr_reader :players, :current_player, :display, :board
 
+  def over?
+    board.over?(players.first)
+  end
+
+end
+
+class InvalidCommandError < StandardError
 end
 
 game = Game.new
